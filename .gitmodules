@@ -1,0 +1,3 @@
+[submodule "asmx86"]
+	path = asmx86
+	url = https://github.com/bensckull/asmx86

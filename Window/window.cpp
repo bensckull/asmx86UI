@@ -3,9 +3,13 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include "window.h"
-
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+#include <QString>
 #include <QtWidgets>
-
+#include <QMenuBar>
+#include <QMenu>
 //créer un widget centrale de notre fenetre principale
 
 MainWindow::MainWindow()
@@ -16,10 +20,12 @@ MainWindow::MainWindow()
     QWidget *topFiller = new QWidget;
     topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    infoLabel = new QLabel(tr("<i>Choose a menu option, or right-click to "
-                              "invoke a context menu</i>"));
-    infoLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    infoLabel->setAlignment(Qt::AlignCenter);
+ 
+  
+      textEdit = new QTextEdit;
+      
+    
+   
 
     QWidget *bottomFiller = new QWidget;
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -27,10 +33,11 @@ MainWindow::MainWindow()
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(5);
     layout->addWidget(topFiller);
-    layout->addWidget(infoLabel);
+    layout->addWidget(textEdit);
     layout->addWidget(bottomFiller);
     widget->setLayout(layout);
-    
+        
+
     //appel des deux fonctions pour créer les actions et les menus
     createActions();
     createMenus();
@@ -48,136 +55,179 @@ MainWindow::MainWindow()
 void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
-    menu.addAction(cutAct);
-    menu.addAction(copyAct);
-    menu.addAction(pasteAct);
     menu.exec(event->globalPos());
 }
 #endif // QT_NO_CONTEXTMENU*/
 
 void MainWindow::newFile()
 {
-    infoLabel->setText(tr("Invoked <b>File|New</b>"));
+ 
+QString txt = textEdit->toPlainText();   
+if (!txt.isEmpty())
+
+{
+
+save();
+
+}
+else 
+textEdit->setText("");     
 }
 
 void MainWindow::open()
 {
-    infoLabel->setText(tr("Invoked <b>File|Open</b>"));
+       QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
+             tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+ 
+         if (fileName != "") {
+             QFile file(fileName);
+             if (!file.open(QIODevice::ReadOnly)) {
+                 QMessageBox::critical(this, tr("Error"),
+                     tr("Could not open file"));
+                 return;
+             }
+             QString contents = file.readAll().constData();
+             textEdit->setPlainText(contents);
+             file.close();
+         }
+   
 }
 
 void MainWindow::save()
 {
-    infoLabel->setText(tr("Invoked <b>File|Save</b>"));
+ 
+ QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "",
+             tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+ 
+         if (fileName != "") {
+             QFile file(fileName);
+             if (!file.open(QIODevice::WriteOnly)) {
+                 // error message
+             } else {
+                 QTextStream stream(&file);
+                 stream << textEdit->toPlainText();
+                 stream.flush();
+                // QMessageBox::critical(this, tr("Error"),
+                  //   tr("Le fichier doit être impérativement sous forme *.txt,*.cpp ou *.h"));
+                 file.close();
+                 
+             }
+         }
+
 }
+
+
 
 void MainWindow::print()
 {
-    infoLabel->setText(tr("Invoked <b>File|Print</b>"));
+   
 }
 
 void MainWindow::undo()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Undo</b>"));
+   
 }
 
 void MainWindow::redo()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Redo</b>"));
+   
 }
 
 void MainWindow::cut()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Cut</b>"));
+   
 }
 
 void MainWindow::copy()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Copy</b>"));
+   
 }
 
 void MainWindow::paste()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Paste</b>"));
+   
 }
 
 void MainWindow::bold()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Bold</b>"));
+   
 }
 
 void MainWindow::italic()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Italic</b>"));
+   
 }
 
 void MainWindow::leftAlign()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Left Align</b>"));
+   
 }
 
 void MainWindow::rightAlign()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Right Align</b>"));
+   
 }
 
 void MainWindow::justify()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Justify</b>"));
+   
 }
 
 void MainWindow::center()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Center</b>"));
+   
 }
 
 void MainWindow::setLineSpacing()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Set Line Spacing</b>"));
+   
 }
 
 void MainWindow::setParagraphSpacing()
 {
-    infoLabel->setText(tr("Invoked <b>Edit|Format|Set Paragraph Spacing</b>"));
+    textEdit->setText(tr("l3az"));
 }
 
-void MainWindow::about()
-{
-    infoLabel->setText(tr("Invoked <b>Help|About</b>"));
-    QMessageBox::about(this, tr("About Menu"),
-            tr("The <b>Menu</b> example shows how to create "
-               "menu-bar menus and context menus."));
-}
 
-void MainWindow::aboutQt()
-{
-    infoLabel->setText(tr("Invoked <b>Help|About Qt</b>"));
-}
 
 
 //ajouter les actions aux groupes 
 void MainWindow::createActions()
 {
+   
     newAct = new QAction(tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip(tr("Create a new file"));
+    newAct->setToolTip("Texte d'aide");
+     
+    QPixmap pixmap("Ressources/Icon/open.png");
+    QIcon BIcon(pixmap);
+    newAct->setIcon(pixmap);    
+
+
+
+
     connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
     openAct = new QAction(tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, &QAction::triggered, this, &MainWindow::open);
+    connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+    
+
 
     saveAct = new QAction(tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
-    connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+    //connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+       connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
     printAct = new QAction(tr("&Print..."), this);
     printAct->setShortcuts(QKeySequence::Print);
     printAct->setStatusTip(tr("Print the document"));
     connect(printAct, &QAction::triggered, this, &MainWindow::print);
 
-    exitAct = new QAction(tr("E&xit"), this);
+    exitAct = new QAction(tr("&Exit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
@@ -276,16 +326,32 @@ void MainWindow::createActions()
     leftAlignAct->setChecked(true);
 }
 
+
 //Ajouter les actions aux menus
 void MainWindow::createMenus()
 {
+   
+    /*QPixmap cutpix("images/cut.png");
+    QAction *cuta = new QAction(cutpix, "&cut", this);*/
+    //QAction *newa = new QAction(newpix, "&new", this);
+    //QAction *quit = new QAction(quitpix, "&cut", this);
+    //cuta->setShortcut(tr("CTRL+C"));
+    //newa->setShortcut(tr("CTRL+N"));
+    
+
+
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newAct);
+    //newAct->setToolTip("Texte d'aide");
     fileMenu->addAction(openAct);
     fileMenu->addAction(saveAct);
     fileMenu->addAction(printAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
+  
+
+
+     
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
@@ -312,4 +378,3 @@ void MainWindow::createMenus()
     formatMenu->addAction(setLineSpacingAct);
     formatMenu->addAction(setParagraphSpacingAct);
 }
-

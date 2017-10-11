@@ -8,6 +8,7 @@
 // créer la fenêtre principale de l'application
 #include <QMainWindow>
 
+#include <QTextEdit>
 class QAction;
 class QActionGroup;
 class QLabel;
@@ -19,6 +20,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+    
 
 protected:
 #ifndef QT_NO_CONTEXTMENU
@@ -45,14 +47,13 @@ private slots:
     void center();
     void setLineSpacing();
     void setParagraphSpacing();
-    void about();
-    void aboutQt();
-
+    
 // créer les différentes actions, 
 //ajouter les actions aux menus et insérer les menus dans la barre de menus de notre fenêtre principale.
 private:
     void createActions();
     void createMenus();
+    QTextEdit *textEdit;
 
 //déclaration des menus et actions 
     QMenu *fileMenu;
@@ -79,7 +80,7 @@ private:
     QAction *centerAct;
     QAction *setLineSpacingAct;
     QAction *setParagraphSpacingAct;
-    QLabel *infoLabel;
+   
 };
 
 #endif

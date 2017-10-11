@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = "test"
+TARGET = "test.exe"
 INCLUDEPATH += .
 QT += widgets
 CONFIG += c++14

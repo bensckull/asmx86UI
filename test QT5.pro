@@ -5,6 +5,7 @@
 TEMPLATE = app
 TARGET = "test"
 INCLUDEPATH += .
+INCLUDEPATH += asmx86
 QT += widgets
 CONFIG += c++14
 

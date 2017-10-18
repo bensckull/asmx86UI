@@ -3,11 +3,11 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = "test.exe"
+TARGET = "test"
 INCLUDEPATH += .
 QT += widgets
 CONFIG += c++14
 
 # Input
-SOURCES += main.cpp Window/window.cpp
+SOURCES += main.cpp Window/window.cpp 
 HEADERS += Window/window.h

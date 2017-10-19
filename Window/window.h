@@ -1,16 +1,30 @@
 #pragma once
 
-#include <QWidget>
-#include<QToolBar>
-
-
 #ifndef WINDOW_H
 #define WINDOW_H
 
 // créer la fenêtre principale de l'application
+
 #include <QMainWindow>
 #include <QTextEdit>
-
+#include <QWidget>
+#include <QToolBar>
+#include <QLineEdit>
+#include <QBoxLayout>
+#include <QLabel>
+#include <QStackedWidget>
+#include <QMenuBar>
+#include <QTextEdit>
+#include <QFile>
+#include <QDebug>
+#include <QString>
+#include <QTextStream>
+#include <QMenu>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QtDebug>
+#include <QApplication>
+#include "../asmx86/parser/parser.hpp"
 
 class QAction;
 class QLabel;
@@ -47,6 +61,30 @@ private:
     QAction *openAct;
     QAction *saveAct;
     QAction *exitAct;
+
+    QToolBar *toolbar;
+
+    QFrame *upperBar;
+    QFrame *sideBar;
+    QLabel *sideItemA;
+    QLabel *sideItemB;
+
+    QStackedWidget *contentStack;
+
+    QFrame *contentPage1;
+    QLabel *page1WidgetB;
+    QLabel *page1WidgetC;
+    QLabel *page1WidgetD;
+
+    QWidget *centralWidget;
+
+    //Les layouts nécessaires :
+    QHBoxLayout *upperBarLayout;
+    QVBoxLayout *sideBarLayout;
+    QGridLayout *page1GridLayout;
+    QGridLayout *centralLayout;
+
+    AsmParser *parser;
 
    
 };

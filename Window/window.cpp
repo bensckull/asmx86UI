@@ -86,7 +86,7 @@ void MainWindow::newFile()
 void MainWindow::open()
 {
    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
-         tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+         tr("Text Files (*.nasm)"));
 
      if (fileName != "") {
          QFile file(fileName);
@@ -112,7 +112,7 @@ void MainWindow::save()
 {
  
  QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "",
-             tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+             tr("Text Files (*.nasm)"));
  
     if (fileName != "") {
         QFile file(fileName);
@@ -123,7 +123,7 @@ void MainWindow::save()
             stream << textEdit->toPlainText();
             stream.flush();
             /*QMessageBox::critical(this, tr("Error"),
-            tr("Le fichier doit être impérativement sous forme *.txt,*.cpp ou *.h"));*/
+            tr("Le fichier doit être impérativement sous forme *.nasm"));*/
             file.close();
 
         }

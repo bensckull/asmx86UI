@@ -96,7 +96,7 @@ private:
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
 
-    //AsmParser *parser;
+  //  AsmParser *parser;
 
    
 };

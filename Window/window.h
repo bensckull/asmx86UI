@@ -23,8 +23,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QtDebug>
+#include <QIcon>
 #include <QApplication>
-#include "../asmx86/parser/parser.hpp"
+
+
+//#include "../asmx86/parser/parser.hpp"
 
 class QAction;
 class QLabel;
@@ -45,12 +48,16 @@ private slots:
     void newFile();
     void open();
     void save();
+    void cut();
+    void copy();
+    void paste();
 // créer les différentes actions, 
 //ajouter les actions aux menus et insérer les menus dans la barre de menus de notre fenêtre principale.
 private:
     void createActions();
     void createMenus();
     QTextEdit *textEdit;
+
     //déclaration des menus et actions
     
     QMenu *fileMenu;
@@ -61,8 +68,11 @@ private:
     QAction *openAct;
     QAction *saveAct;
     QAction *exitAct;
+    QAction *cutAct;    
+    QAction *copyAct;
+    QAction *pasteAct;
 
-    QToolBar *toolbar;
+  
 
     QFrame *upperBar;
     QFrame *sideBar;
@@ -75,6 +85,7 @@ private:
     QLabel *page1WidgetB;
     QLabel *page1WidgetC;
     QLabel *page1WidgetD;
+     
 
     QWidget *centralWidget;
 
@@ -84,7 +95,7 @@ private:
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
 
-    AsmParser *parser;
+    //AsmParser *parser;
 
    
 };

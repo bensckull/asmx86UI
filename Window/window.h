@@ -57,6 +57,7 @@ private:
     void createActions();
     void createMenus();
     QTextEdit *textEdit;
+    bool maybeSave();    
 
     //déclaration des menus et actions
     

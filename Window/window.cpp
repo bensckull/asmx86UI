@@ -131,9 +131,16 @@ void MainWindow::save()
 }
 
 
-void MainWindow::cut(){}
-void MainWindow::copy(){}
-void MainWindow::paste(){}
+void MainWindow::cut(){
+      textEdit->cut();
+
+}
+void MainWindow::copy(){
+      textEdit->copy();
+}
+void MainWindow::paste(){
+      textEdit->paste();
+}
 //Création des Actions
 void MainWindow::createActions()
 {

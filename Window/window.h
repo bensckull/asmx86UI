@@ -25,9 +25,11 @@
 #include <QtDebug>
 #include <QIcon>
 #include <QApplication>
+#include "codeeditor.h"
+#include "registerwidget.h"
+#include "variablewidget.h"
+#include "../asmx86/parser/parser.hpp"
 
-
-//#include "../asmx86/parser/parser.hpp"
 
 class QAction;
 class QLabel;
@@ -51,13 +53,15 @@ private slots:
     void cut();
     void copy();
     void paste();
+    void undo();
+    void redo();
 // créer les différentes actions, 
 //ajouter les actions aux menus et insérer les menus dans la barre de menus de notre fenêtre principale.
 private:
     void createActions();
     void createMenus();
-    QTextEdit *textEdit;
-    bool maybeSave();    
+    CodeEditor *textEdit;
+     
 
     //déclaration des menus et actions
     
@@ -72,13 +76,13 @@ private:
     QAction *cutAct;    
     QAction *copyAct;
     QAction *pasteAct;
-
-  
+    QAction *undoAct;
+    QAction *redoAct;
 
     QFrame *upperBar;
     QFrame *sideBar;
-    QLabel *sideItemA;
-    QLabel *sideItemB;
+    registerWidget *sideItemA;
+    variableWidget *sideItemB;
 
     QStackedWidget *contentStack;
 
@@ -96,7 +100,7 @@ private:
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
 
-  //  AsmParser *parser;
+    AsmParser *parser;
 
    
 };

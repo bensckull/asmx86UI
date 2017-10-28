@@ -1,5 +1,5 @@
 #include "window.h"
-
+#include <QFormLayout>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -10,27 +10,31 @@ MainWindow::MainWindow(QWidget *parent)
     createActions();
     createMenus();
     
+    
 
     upperBar = new QFrame;
     sideBar = new QFrame;
-    sideItemA = new QLabel("Item A");
-    sideItemB = new QLabel("Item B");
+
+    sideItemA = new registerWidget();
+    sideItemB = new variableWidget();
 
     contentStack = new QStackedWidget;
 
     contentPage1 = new QFrame;
-    textEdit = new QTextEdit();
+    textEdit = new CodeEditor();
     page1WidgetB = new QLabel("widget B");
     page1WidgetC = new QLabel("widget C");
     page1WidgetD = new QLabel("widget D");
 
     centralWidget = new QWidget;
 
+ 
+    
     //Les layouts nécessaires :
     sideBarLayout = new QVBoxLayout;
     page1GridLayout = new QGridLayout;
     centralLayout = new QGridLayout;
-
+    
     //Connectons des pièces
 
     /* Installation de la barre latérale */
@@ -76,11 +80,30 @@ void MainWindow::newFile()
  
     QString txt = textEdit->toPlainText();   
     if (!txt.isEmpty()){
-        save();
-    }
-    else 
-        textEdit->setText("");  
+        
        
+ QMessageBox msgBox;
+ msgBox.setText("Le document a été modifié.");
+ msgBox.setInformativeText("Voulez-vous enregistrer les changements ?");
+ msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+ msgBox.setDefaultButton(QMessageBox::Save);
+ int ret = msgBox.exec();
+
+  switch (ret) {
+   case QMessageBox::Save:
+      save();
+       break;
+   case QMessageBox::Discard:
+      textEdit->setPlainText("" );
+
+       break;
+   case QMessageBox::Cancel:
+       // Clic sur Annuler
+       break;
+ }
+        
+    }
+   
 }
 
 void MainWindow::open()
@@ -89,12 +112,19 @@ void MainWindow::open()
          tr("Text Files (*.nasm)"));
 
      if (fileName != "") {
+
+        
          QFile file(fileName);
+         
          if (!file.open(QIODevice::ReadOnly)) {
              QMessageBox::critical(this, tr("Error"),
                  tr("Could not open file"));
              return;
          }
+      
+
+         parser = new  AsmParser(fileName.toStdString());
+        
          QString contents = file.readAll().constData();
          textEdit->setPlainText(contents);
          
@@ -115,6 +145,9 @@ void MainWindow::save()
              tr("Text Files (*.nasm)"));
  
     if (fileName != "") {
+     if (!fileName.contains(".nasm")){
+            fileName +=".nasm";
+        }
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
             // error message
@@ -122,8 +155,6 @@ void MainWindow::save()
             QTextStream stream(&file);
             stream << textEdit->toPlainText();
             stream.flush();
-            /*QMessageBox::critical(this, tr("Error"),
-            tr("Le fichier doit être impérativement sous forme *.nasm"));*/
             file.close();
 
         }
@@ -141,6 +172,14 @@ void MainWindow::copy(){
 void MainWindow::paste(){
       textEdit->paste();
 }
+void MainWindow::undo(){
+      textEdit->undo();
+}
+void MainWindow::redo(){
+      textEdit->redo();
+}
+
+
 //Création des Actions
 void MainWindow::createActions()
 {
@@ -199,7 +238,26 @@ void MainWindow::createActions()
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current ""selection"));
     connect(pasteAct, SIGNAL(triggered()), this, SLOT(paste()));
     fileToolBar->addAction(pasteAct);
+
+    const QIcon undoIcon = QIcon::fromTheme("edit-undo", QIcon("undo.png"));
+    undoAct = new QAction(undoIcon,tr("&Undo"), this);
+    undoAct->setShortcuts(QKeySequence::Undo);
+    undoAct->setStatusTip(tr("Previous"));
+    connect(undoAct, SIGNAL(triggered()), this, SLOT(undo()));
+    fileToolBar->addAction(undoAct);
+
+    
+
+    const QIcon redoIcon = QIcon::fromTheme("edit-redo", QIcon("redo.png"));
+    redoAct = new QAction(redoIcon,tr("&Redo"), this);
+    redoAct->setShortcuts(QKeySequence::Redo);
+    redoAct->setStatusTip(tr("Next"));
+    connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
+    fileToolBar->addAction(redoAct);
+
 }
+
+
 
 
 // Création des menus

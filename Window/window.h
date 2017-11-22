@@ -1,9 +1,34 @@
+/* --------------------------------------------------------------------------
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * -------------------------------------------------------------------------- */
+
+/*! variablewidget.h
+ *
+ *  \author YassineAi <yassine.soudane@gmail.com>
+ *  \version 1.0
+ *  \date october 2017
+ */
+
 #pragma once
 
 #ifndef WINDOW_H
 #define WINDOW_H
 
-// créer la fenêtre principale de l'application
+/* --------------------------------------------------------------------------
+ *  Modules
+ * -------------------------------------------------------------------------- */
 
 #include <QMainWindow>
 #include <QTextEdit>
@@ -24,12 +49,16 @@
 #include <QMessageBox>
 #include <QtDebug>
 #include <QIcon>
+#include <QFormLayout>
 #include <QApplication>
 #include "codeeditor.h"
 #include "registerwidget.h"
 #include "variablewidget.h"
 #include "../asmx86/parser/parser.hpp"
 
+/* --------------------------------------------------------------------------
+ *  Class
+ * -------------------------------------------------------------------------- */
 
 class QAction;
 class QLabel;
@@ -37,15 +66,19 @@ class QFrame;
 class QMenu;
 
 
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+   /*! Constructor
+         *
+         *  \Parameter with a default value
+         */ 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    //communication entre objets
+
+ /*!Communication between objects */
 private slots:
     void newFile();
     void open();
@@ -55,15 +88,16 @@ private slots:
     void paste();
     void undo();
     void redo();
-// créer les différentes actions, 
-//ajouter les actions aux menus et insérer les menus dans la barre de menus de notre fenêtre principale.
+
+/*Creating Actions and Menus*/ 
+        
 private:
     void createActions();
     void createMenus();
     CodeEditor *textEdit;
      
 
-    //déclaration des menus et actions
+ /*!Menus and Actions */
     
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -94,12 +128,14 @@ private:
 
     QWidget *centralWidget;
 
-    //Les layouts nécessaires :
+    /*!The needed Layouts*/
+
     QHBoxLayout *upperBarLayout;
     QVBoxLayout *sideBarLayout;
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
-
+    
+    /*!Parser*/
     AsmParser *parser;
 
    

@@ -1,11 +1,46 @@
-#include <QtWidgets>
+/* --------------------------------------------------------------------------
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * -------------------------------------------------------------------------- */
+
+/*! variablewidget.h
+ *
+ *  \author YassineAi <yassine.soudane@gmail.com>
+ *  \version 1.0
+ *  \date october 2017
+ */
+
+
+
+/* --------------------------------------------------------------------------
+ *  Modules
+ * -------------------------------------------------------------------------- */
 
 #include "codeeditor.h"
 
 
+/*! Constructor
+         *
+         *  \The code editors implementation
+         *  \Calculate the line number area width and highlight the first line when the editor is created
+         *  \Connection between slots to signals in QPlainTextEdit
+         */ 
+
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
+
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
@@ -15,7 +50,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     highlightCurrentLine();
 }
 
-
+/*!Calculate the width of the LineNumberArea widget*/
 
 int CodeEditor::lineNumberAreaWidth()
 {
@@ -31,7 +66,7 @@ int CodeEditor::lineNumberAreaWidth()
     return space;
 }
 
-
+/*!Update the width of the line number area*/
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
@@ -39,6 +74,11 @@ void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 }
 
 
+/*! This slot is invoked when the editors viewport has been scrolled
+         *
+         *  \The QRect given as argument is the part of the editing area that is do be updated 
+         *  \dy holds the number of pixels the view has been scrolled vertically
+         */ 
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
@@ -52,7 +92,7 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 }
 
 
-
+/*!Resize the line number area when the size of the editor changes*/
 void CodeEditor::resizeEvent(QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
@@ -62,7 +102,7 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
 }
 
 
-
+/*!Highlight the current line when the cursor position changes*/
 void CodeEditor::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
@@ -83,7 +123,8 @@ void CodeEditor::highlightCurrentLine()
 }
 
 
-
+/*!Paint the widget's background */
+/*!paint the line numbers in the extra area for each line*/
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
@@ -95,6 +136,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int) blockBoundingRect(block).height();
 
+/*!Check if the block is visible in addition to check if it is in the areas viewport*/
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);

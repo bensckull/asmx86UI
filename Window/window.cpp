@@ -1,6 +1,37 @@
-#include "window.h"
-#include <QFormLayout>
+/* --------------------------------------------------------------------------
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * -------------------------------------------------------------------------- */
 
+/*! variablewidget.h
+ *
+ *  \author YassineAi <yassine.soudane@gmail.com>
+ *  \version 1.0
+ *  \date october 2017
+ */
+
+/* --------------------------------------------------------------------------
+ *  Modules
+ * -------------------------------------------------------------------------- */
+
+#include "window.h"
+
+/*! Constructor
+         *
+         *  \Define Labels,Frames and Layouts
+         *  \Define Widgets
+         */ 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,22 +60,25 @@ MainWindow::MainWindow(QWidget *parent)
     centralWidget = new QWidget;
 
  
-    
-    //Les layouts nécessaires :
+   
     sideBarLayout = new QVBoxLayout;
     page1GridLayout = new QGridLayout;
     centralLayout = new QGridLayout;
     
-    //Connectons des pièces
-
-    /* Installation de la barre latérale */
+    /*!Connect the pieces
+         *  \Setup the upperbar
+         *  \Setup the sidebar
+	 *  \Setup the content stacked widget
+         *  \Setup the main elements into the central layout
+         */ 
+  
     sideBarLayout->addWidget(sideItemA);
     sideBarLayout->addWidget(sideItemB);
     sideBarLayout->addStretch();
     sideBar->setLayout(sideBarLayout);
     sideBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
-    /* configuration du widget de contenu empilé */
+   
     page1GridLayout->addWidget(textEdit, 0, 0, 3, 1);
     page1GridLayout->addWidget(page1WidgetB, 0, 1, 1, 1);
     page1GridLayout->addWidget(page1WidgetC, 1, 1, 2, 1);
@@ -54,14 +88,14 @@ MainWindow::MainWindow(QWidget *parent)
     contentStack->addWidget(contentPage1);
     contentStack->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    /* installation des principaux éléments (layout centrale)*/
+    
     centralLayout->addWidget(upperBar, 0, 0, 1, 2);
     centralLayout->addWidget(sideBar, 1, 0, 1, 1);
     centralLayout->addWidget(contentStack, 1, 1, 1, 1);
     centralWidget->setLayout(centralLayout);
     setCentralWidget(centralWidget);
 
-    /* couleur et border*/
+    /*Color and border*/
     setStyleSheet("QWidget {"
                   "border: 1px solid black;"
                   "color: black"
@@ -75,6 +109,7 @@ MainWindow::~MainWindow()
 
 }
 
+/*!Create a new file*/
 void MainWindow::newFile()
 {
  
@@ -93,12 +128,13 @@ void MainWindow::newFile()
    case QMessageBox::Save:
       save();
        break;
+
    case QMessageBox::Discard:
       textEdit->setPlainText("" );
 
        break;
    case QMessageBox::Cancel:
-       // Clic sur Annuler
+
        break;
  }
         
@@ -106,6 +142,7 @@ void MainWindow::newFile()
    
 }
 
+/*!Open a file*/
 void MainWindow::open()
 {
    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
@@ -137,7 +174,7 @@ void MainWindow::open()
      }
    
 }
-
+ /*!Save a file*/
 void MainWindow::save()
 {
  
@@ -161,26 +198,34 @@ void MainWindow::save()
     }
 }
 
-
+/*!Cut the contents of the file*/
 void MainWindow::cut(){
       textEdit->cut();
 
 }
+/*!Copy the contents of the file*/
 void MainWindow::copy(){
       textEdit->copy();
 }
+/*!Paste the contents of a file*/
 void MainWindow::paste(){
       textEdit->paste();
 }
+/*!Undo(previous)*/
 void MainWindow::undo(){
       textEdit->undo();
 }
+/*!Redo(next)*/
 void MainWindow::redo(){
       textEdit->redo();
 }
 
+ /*!Create Actions
+         *  \Connect slots to signals
+         *  \Add Actions to the toolbar
+         *  \Add Icon
+	 */
 
-//Création des Actions
 void MainWindow::createActions()
 {
     
@@ -257,10 +302,12 @@ void MainWindow::createActions()
 
 }
 
+/*!Create Menus
+         *  \Add Actions to the Menu
+         *
+	 */
 
 
-
-// Création des menus
 void MainWindow::createMenus()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));

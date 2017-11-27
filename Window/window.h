@@ -54,7 +54,8 @@
 #include "codeeditor.h"
 #include "registerwidget.h"
 #include "variablewidget.h"
-#include "../asmx86/parser/parser.hpp"
+#include "pile.h"
+#include "../asmx86/engine/engine.hpp"
 
 /* --------------------------------------------------------------------------
  *  Class
@@ -123,7 +124,7 @@ private:
     QFrame *contentPage1;
     QLabel *page1WidgetB;
     QLabel *page1WidgetC;
-    QLabel *page1WidgetD;
+    pile *page1WidgetD;
      
 
     QWidget *centralWidget;
@@ -135,8 +136,8 @@ private:
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
     
-    /*!Parser*/
-    AsmParser *parser;
+    /*!Engine*/
+    AsmEngine *engine;
 
    
 };

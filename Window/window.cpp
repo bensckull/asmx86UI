@@ -48,14 +48,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     sideItemA = new registerWidget();
     sideItemB = new variableWidget();
-
+    page1WidgetD = new pile();
+    
     contentStack = new QStackedWidget;
 
     contentPage1 = new QFrame;
     textEdit = new CodeEditor();
     page1WidgetB = new QLabel("widget B");
     page1WidgetC = new QLabel("widget C");
-    page1WidgetD = new QLabel("widget D");
+    
 
     centralWidget = new QWidget;
 
@@ -160,7 +161,7 @@ void MainWindow::open()
          }
       
 
-         parser = new  AsmParser(fileName.toStdString());
+         engine = new  AsmEngine(fileName.toStdString());
         
          QString contents = file.readAll().constData();
          textEdit->setPlainText(contents);
@@ -325,6 +326,7 @@ void MainWindow::createMenus()
     ExecMenu = menuBar()->addMenu(tr("&Execution"));
     helpMenu = menuBar()->addMenu(tr("&Help"));
    
+
 
 }
 

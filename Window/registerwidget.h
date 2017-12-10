@@ -30,10 +30,13 @@
  * -------------------------------------------------------------------------- */
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QLineEdit>
 #include <QLabel>
 #include <QGridLayout>
 #include <QFormLayout>
+#include <vector>
+#include "../asmx86/engine/engine.hpp"
+using namespace std;
 /* --------------------------------------------------------------------------
  *  Class
  * -------------------------------------------------------------------------- */
@@ -51,27 +54,12 @@ public:
     explicit registerWidget(QWidget *parent = 0);
 
 private:
-
- /*!Editable Fields*/
-    QTextEdit *eaxEdit;
-    QTextEdit *ebxEdit;
-    QTextEdit *ecxEdit;
-    QTextEdit *edxEdit;
-    QTextEdit *ebpEdit;
-    QTextEdit *espEdit;
-    QTextEdit *esiEdit;
-    QTextEdit *ediEdit;
+ 
+    QVBoxLayout *grandLayout;
     
- /*!Labels*/
-    QLabel *eaxLabel;
-    QLabel *ebxLabel;
-    QLabel *ecxLabel;
-    QLabel *edxLabel;
-    QLabel *ebpLabel;
-    QLabel *espLabel;
-    QLabel *esiLabel;
-    QLabel *ediLabel;
-
+public:  
+    void clear();
+    void setRegister(vector <AsmRegister*> registers, string content); 
 };
 
 #endif // REGISTERWIDGET_H

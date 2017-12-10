@@ -31,10 +31,11 @@
  * -------------------------------------------------------------------------- */
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QLineEdit>
 #include <QLabel>
 #include <QGridLayout>
-
+#include <string>
+using namespace std;
 /* --------------------------------------------------------------------------
  *  Class
  * -------------------------------------------------------------------------- */
@@ -49,18 +50,15 @@ public:
          *  \Parameter with a default value
          */ 
     explicit variableWidget(QWidget *parent = 0);
-
-
+     
+    /*add variable*/
+    void addVar(const std::string &name , const std::string &val);
+    void clear();
 private:
     /*!Editable Fields*/
-    QTextEdit *var1edit;
-    QTextEdit *var2edit;
+    QVBoxLayout *yVbox;
     
-    /*!Labels*/
-    QLabel *var1label;
-    QLabel *var2label;
-
-
+    
 
 };
 

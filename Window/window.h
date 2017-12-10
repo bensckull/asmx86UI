@@ -54,9 +54,10 @@
 #include "codeeditor.h"
 #include "registerwidget.h"
 #include "variablewidget.h"
-#include "pile.h"
+#include <iostream>
+#include <fstream> 
 #include "../asmx86/engine/engine.hpp"
-
+using namespace std;
 /* --------------------------------------------------------------------------
  *  Class
  * -------------------------------------------------------------------------- */
@@ -67,7 +68,7 @@ class QFrame;
 class QMenu;
 
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow 
 {
     Q_OBJECT
 
@@ -89,14 +90,18 @@ private slots:
     void paste();
     void undo();
     void redo();
+    void execution();
 
 /*Creating Actions and Menus*/ 
         
 private:
     void createActions();
     void createMenus();
-    CodeEditor *textEdit;
+    CodeEditor *textEdit_haut;
      
+  
+  
+    
 
  /*!Menus and Actions */
     
@@ -113,18 +118,19 @@ private:
     QAction *pasteAct;
     QAction *undoAct;
     QAction *redoAct;
+    QAction *execAct;
+
+    
 
     QFrame *upperBar;
     QFrame *sideBar;
     registerWidget *sideItemA;
     variableWidget *sideItemB;
-
+    QLabel *sideItemC;
     QStackedWidget *contentStack;
 
     QFrame *contentPage1;
-    QLabel *page1WidgetB;
-    QLabel *page1WidgetC;
-    pile *page1WidgetD;
+    QTextEdit   *textEdit_bas;
      
 
     QWidget *centralWidget;
@@ -132,7 +138,7 @@ private:
     /*!The needed Layouts*/
 
     QHBoxLayout *upperBarLayout;
-    QVBoxLayout *sideBarLayout;
+    QGridLayout *sideBarLayout;
     QGridLayout *page1GridLayout;
     QGridLayout *centralLayout;
     

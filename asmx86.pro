@@ -12,7 +12,6 @@ SOURCES += Window/window.cpp \
             main.cpp \
     Window/codeeditor.cpp \
     Window/registerwidget.cpp \
-    Window/pile.cpp\
     Window/variablewidget.cpp
 
 HEADERS  += asmx86/engine/register.hpp \
@@ -30,6 +29,5 @@ HEADERS  += asmx86/engine/register.hpp \
     Window/window.h \
     Window/codeeditor.h \
     Window/registerwidget.h \
-    Window/pile.h\
     Window/variablewidget.h
 

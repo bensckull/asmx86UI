@@ -28,48 +28,67 @@
 
 #include "variablewidget.h"
 
+
 /*! Constructor
          *
-         *  \Define Labels and Editable Fields
-         *  \Make all the Editable Field Disabled 
+         *  \Define Label and QVBoxLayout 
          */ 
-
 variableWidget::variableWidget(QWidget *parent) : QWidget(parent)
+
 {
-    QLabel *title = new QLabel("Variables");
+    QLabel *title = new QLabel("VARIABLES");
     title->adjustSize();
+    title->setStyleSheet("QLabel {color : white;background-color: darkgrey;padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;}");
+    setFixedSize(300,170);
 
-    setFixedSize(300,110);
 
-    var1edit = new QTextEdit;
+    /*Class lines up widgets vertically*/
+    yVbox = new QVBoxLayout(this);
+    yVbox->addWidget(title);
+}
+
+         
+         
+/*remove*/
+void remove(QLayout* layout)
+{
+    QLayoutItem* child;
+    while(layout->count()!=0)
+    {
+        child = layout->takeAt(0);
+        if(child->layout() != 0)
+        {
+            remove(child->layout());
+        }
+        else if(child->widget() != 0)
+        {
+            delete child->widget();
+        }
+
+        delete child;
+    }
+}
+
+/*Define Labels and Editable Fields*/
+void variableWidget::addVar(const std::string &name , const std::string &val){
+    QLabel *var1label = new QLabel(QString::fromStdString(name));
+    
+    
+    QLineEdit *var1edit = new QLineEdit(QString::fromStdString(val));
     var1edit->adjustSize();
     
-
-
-
-    var2edit = new QTextEdit;
-    var2edit->adjustSize();
-    
-
-
-
-    var1label = new QLabel("VAR1");
-    var2label = new QLabel("VAR2");
-    
-    /*!Class lines up widgets horizontally*/
     QHBoxLayout *var1Hbox = new QHBoxLayout();
     var1Hbox->addWidget(var1label);
     var1Hbox->addWidget(var1edit);
-
-    QHBoxLayout *var2Hbox = new QHBoxLayout();
-    var2Hbox->addWidget(var2label);
-    var2Hbox->addWidget(var2edit);
-
-    /*Class lines up widgets vertically*/
-    QVBoxLayout *yVbox = new QVBoxLayout(this);
-    yVbox->addWidget(title);
+    
+    var1edit->setStyleSheet("QLineEdit {padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;}");
+    var1label->setStyleSheet("QLabel {color :rgb(255,50,0); }");
     yVbox->addLayout(var1Hbox);
-    yVbox->addLayout(var2Hbox);
 
 }
+
+void variableWidget::clear() {
+    remove(yVbox);
+}
+    
 

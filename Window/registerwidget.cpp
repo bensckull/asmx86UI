@@ -36,58 +36,69 @@
 
 registerWidget::registerWidget(QWidget *parent) : QWidget(parent)
 {
-QLabel *title = new QLabel("Registres");
-title->adjustSize();
+    QLabel *title = new QLabel("REGISTRES");
+    title->adjustSize();
+    title->setStyleSheet("QLabel {color : white;background-color: darkgrey;padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;}");
+    setFixedSize(300,160);
 
-setFixedSize(300,190);
-
-eaxEdit = new QTextEdit;
-ebxEdit = new QTextEdit;
-ecxEdit = new QTextEdit;
-edxEdit = new QTextEdit;
-ebpEdit = new QTextEdit;
-espEdit = new QTextEdit;
-esiEdit = new QTextEdit;
-ediEdit = new QTextEdit;
+    /*!QVBoxLayout Class lines up widgets vertically*/
+    grandLayout = new QVBoxLayout(this);
+    grandLayout->addWidget(title);
+}
 
 
+/*remove*/
+void clearRegister(QLayout* layout)
+{
+    QLayoutItem* child;
+    while(layout->count()!=0)
+    {
+        child = layout->takeAt(0);
+        if(child->layout() != 0)
+        {
+            clearRegister(child->layout());
+        }
+        else if(child->widget() != 0)
+        {
+            delete child->widget();
+        }
+
+        delete child;
+    }
+}
 
 
 
+void registerWidget::clear() {
+    clearRegister(grandLayout);
+}
+
+ 
+void registerWidget::setRegister(vector <AsmRegister*> registers, string content) {
 
 
-eaxLabel = new QLabel("EAX");
-ebxLabel = new QLabel("EBX");
-ecxLabel = new QLabel("ECX");
-edxLabel = new QLabel("EDX");
-ebpLabel = new QLabel("EBP");
-espLabel = new QLabel("ESP");
-esiLabel = new QLabel("ESI");
-ediLabel = new QLabel("EDI");
+    QFormLayout *layoutf1 = new QFormLayout;
+    QFormLayout *layoutf2 = new QFormLayout;
 
-QFormLayout *layoutf1 = new QFormLayout;
-     layoutf1->addRow(eaxLabel,eaxEdit);
-     layoutf1->addRow(ebxLabel,ebxEdit);
-     layoutf1->addRow(ecxLabel,ecxEdit);
-     layoutf1->addRow(edxLabel,edxEdit);
-
-
-QFormLayout *layoutf2 = new QFormLayout;
-     layoutf2->addRow(ebpLabel,ebpEdit);
-     layoutf2->addRow(espLabel,espEdit);
-     layoutf2->addRow(esiLabel,esiEdit);
-     layoutf2->addRow(ediLabel,ediEdit);
-
-
-   
-/*!QHBoxLayout Class lines up widgets horizontally*/
-QHBoxLayout *genLay = new QHBoxLayout();
-genLay->addLayout(layoutf1);
-genLay->addLayout(layoutf2);
-
-/*!QVBoxLayout Class lines up widgets vertically*/
-QVBoxLayout *grandLayout = new QVBoxLayout(this);
-grandLayout->addWidget(title);
-grandLayout->addLayout(genLay);
+    for(unsigned int i=0; i< registers.size(); i++) {
+    
+        if(content.find(registers[i]->get_label())==std::string::npos)
+            continue;
+        QLabel *eaxLabel = new QLabel(QString::fromStdString(registers[i]->get_label()));
+        QLineEdit *eaxEdit = new QLineEdit(QString::fromStdString(std::to_string(registers[i]->get_value())));
+        eaxEdit->setStyleSheet("QLineEdit {padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;}");
+        eaxLabel->setStyleSheet("QLabel {color : green; }");
+        if(registers[i]->get_label().find("x")!=std::string::npos) {
+            layoutf1->addRow(eaxLabel,eaxEdit);
+            
+        } else {
+            layoutf2->addRow(eaxLabel,eaxEdit);
+        }
+    }
+    
+    QHBoxLayout *genLay = new QHBoxLayout();
+    genLay->addLayout(layoutf1);
+    genLay->addLayout(layoutf2);
+    grandLayout->addLayout(genLay);
 }
 

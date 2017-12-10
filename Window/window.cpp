@@ -45,49 +45,53 @@ MainWindow::MainWindow(QWidget *parent)
 
     upperBar = new QFrame;
     sideBar = new QFrame;
-
     sideItemA = new registerWidget();
     sideItemB = new variableWidget();
-    page1WidgetD = new pile();
+    sideItemC = new QLabel("PILE");
+    
+    textEdit_bas = new QTextEdit();
+    textEdit_bas->setReadOnly(true);
     
     contentStack = new QStackedWidget;
 
     contentPage1 = new QFrame;
-    textEdit = new CodeEditor();
-    page1WidgetB = new QLabel("widget B");
-    page1WidgetC = new QLabel("widget C");
+    textEdit_haut = new CodeEditor();
+    
+    setStyleSheet("QTextEdit {padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;font-weight: bold;font-size: 15px;}");
+    sideItemC->setStyleSheet("QLabel {color : white;background-color: gray;padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;border-width: 1px;}"); 
+    
     
 
     centralWidget = new QWidget;
 
  
    
-    sideBarLayout = new QVBoxLayout;
+    sideBarLayout = new QGridLayout;
     page1GridLayout = new QGridLayout;
     centralLayout = new QGridLayout;
     
     /*!Connect the pieces
          *  \Setup the upperbar
          *  \Setup the sidebar
-	 *  \Setup the content stacked widget
+	     *  \Setup the content stacked widget
          *  \Setup the main elements into the central layout
          */ 
   
     sideBarLayout->addWidget(sideItemA);
     sideBarLayout->addWidget(sideItemB);
-    sideBarLayout->addStretch();
+    sideBarLayout->addWidget(sideItemC);
     sideBar->setLayout(sideBarLayout);
     sideBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
    
-    page1GridLayout->addWidget(textEdit, 0, 0, 3, 1);
-    page1GridLayout->addWidget(page1WidgetB, 0, 1, 1, 1);
-    page1GridLayout->addWidget(page1WidgetC, 1, 1, 2, 1);
-    page1GridLayout->addWidget(page1WidgetD, 3, 0, 1, 2);
+   
+    page1GridLayout->addWidget(textEdit_haut);
+    page1GridLayout->addWidget(textEdit_bas,1, 0, 3, 1);
     contentPage1->setLayout(page1GridLayout);
 
     contentStack->addWidget(contentPage1);
     contentStack->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 
     
     centralLayout->addWidget(upperBar, 0, 0, 1, 2);
@@ -97,13 +101,17 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     /*Color and border*/
-    setStyleSheet("QWidget {"
+    setStyleSheet("QTextEdit {"
                   "border: 1px solid black;"
                   "color: black"
                   "}");
 
     resize(1024,768);
+    
+    
+   
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -114,16 +122,16 @@ MainWindow::~MainWindow()
 void MainWindow::newFile()
 {
  
-    QString txt = textEdit->toPlainText();   
+    QString txt = textEdit_haut->toPlainText();   
     if (!txt.isEmpty()){
         
        
  QMessageBox msgBox;
- msgBox.setText("Le document a été modifié.");
- msgBox.setInformativeText("Voulez-vous enregistrer les changements ?");
- msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
- msgBox.setDefaultButton(QMessageBox::Save);
- int ret = msgBox.exec();
+    msgBox.setText("Le document a été modifié.");
+    msgBox.setInformativeText("Voulez-vous enregistrer les changements ?");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Save);
+  int ret = msgBox.exec();
 
   switch (ret) {
    case QMessageBox::Save:
@@ -131,7 +139,7 @@ void MainWindow::newFile()
        break;
 
    case QMessageBox::Discard:
-      textEdit->setPlainText("" );
+      textEdit_haut->setPlainText("" );
 
        break;
    case QMessageBox::Cancel:
@@ -140,33 +148,101 @@ void MainWindow::newFile()
  }
         
     }
+
    
 }
+
+
+
+
+
+void MainWindow::execution(){
+
+
+
+        // creation d'un fichier on on stock le nouveau contenu
+        std:string filename = "test.txt";
+        std::ofstream outfile (filename);
+        outfile << textEdit_haut->toPlainText().toStdString() << std::endl;
+        outfile.close();
+        
+        engine = new  AsmEngine(filename);
+      
+        // varibles
+        sideItemB->clear();
+        vector<AsmVariable *> variables;
+        variables=engine->getVariables()->get_variables();
+        for(unsigned int i = 0; i < variables.size(); i++) {
+         
+            sideItemB->addVar(variables[i]->get_name(),
+                variables[i]->get_value()
+            );
+         }
+         
+         //registres
+         sideItemA->clear();
+         sideItemA->setRegister(engine->getRegisters()->get_registers(),
+         textEdit_haut->toPlainText().toStdString());
+         
+         
+         
+         // pile
+        std::string stack = "";
+        for(unsigned int i = 0; i < engine->getStack().size(); i++ ) {
+            stack += ((i==0)? "" : "\n" ) + std::to_string(engine->getStack()[i]);
+        }
+            textEdit_bas->setText(QString::fromStdString(stack)); 
+         
+}
+
 
 /*!Open a file*/
 void MainWindow::open()
 {
+
+
    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
-         tr("Text Files (*.nasm)"));
-
-     if (fileName != "") {
-
-        
+         tr("Text Files (*.nasm)"));   
+ 
+   if (fileName != "") {
+   
          QFile file(fileName);
          
          if (!file.open(QIODevice::ReadOnly)) {
-             QMessageBox::critical(this, tr("Error"),
-                 tr("Could not open file"));
-             return;
-         }
-      
+ QMessageBox msgBox;
+         msgBox.setText("Veuillez choisir le nombre de bits sur les quels vous travaillez");
+         msgBox.setInformativeText("Voulez-vous enregistrer les changements ?");
+         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+         msgBox.setDefaultButton(QMessageBox::Save);
+ int ret = msgBox.exec();
 
-         engine = new  AsmEngine(fileName.toStdString());
+  switch (ret) {
+   case QMessageBox::Save:
+      save();
+       break;
+
+   case QMessageBox::Discard:
+      textEdit_haut->setPlainText("" );
+
+       break;
+   case QMessageBox::Cancel:
+
+       break;
+ 
+        
+    }
+        
+         }
+     
+     
+        // engine = new  AsmEngine(fileName.toStdString());
+       
+         
         
          QString contents = file.readAll().constData();
-         textEdit->setPlainText(contents);
+         textEdit_haut->setPlainText(contents);
          
-         QString debugS = textEdit->toPlainText();
+         QString debugS = textEdit_haut->toPlainText();
 
 
          qDebug().nospace() << "::" << qPrintable(debugS) << "::";
@@ -175,6 +251,7 @@ void MainWindow::open()
      }
    
 }
+
  /*!Save a file*/
 void MainWindow::save()
 {
@@ -188,10 +265,9 @@ void MainWindow::save()
         }
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
-            // error message
         } else {
             QTextStream stream(&file);
-            stream << textEdit->toPlainText();
+            stream << textEdit_haut->toPlainText();
             stream.flush();
             file.close();
 
@@ -201,24 +277,24 @@ void MainWindow::save()
 
 /*!Cut the contents of the file*/
 void MainWindow::cut(){
-      textEdit->cut();
+      textEdit_haut->cut();
 
 }
 /*!Copy the contents of the file*/
 void MainWindow::copy(){
-      textEdit->copy();
+      textEdit_haut->copy();
 }
 /*!Paste the contents of a file*/
 void MainWindow::paste(){
-      textEdit->paste();
+      textEdit_haut->paste();
 }
 /*!Undo(previous)*/
 void MainWindow::undo(){
-      textEdit->undo();
+      textEdit_haut->undo();
 }
 /*!Redo(next)*/
 void MainWindow::redo(){
-      textEdit->redo();
+      textEdit_haut->redo();
 }
 
  /*!Create Actions
@@ -230,8 +306,18 @@ void MainWindow::redo(){
 void MainWindow::createActions()
 {
     
-    QToolBar *fileToolBar = addToolBar(tr("File"));
     
+    QToolBar *fileToolBar = addToolBar(tr("File"));
+    fileToolBar->setStyleSheet("QToolBar {padding: 1px;border-style: solid;border: 2px solid gray;border-radius: 8px;}");
+    
+    
+    //const QIcon execIcon = QIcon::fromTheme("places-favorites", QIcon("basket.png"));
+    execAct = new QAction(tr("&Exec"),this);
+    execAct->setStatusTip(tr("Exec"));
+    execAct->setToolTip(tr("exectue"));
+    connect(execAct, SIGNAL(triggered()), this, SLOT(execution()));
+    fileToolBar->addAction(execAct); 
+   
     const QIcon newIcon = QIcon::fromTheme("document-new", QIcon("new.png"));
     newAct = new QAction(newIcon,tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
@@ -303,10 +389,10 @@ void MainWindow::createActions()
 
 }
 
-/*!Create Menus
-         *  \Add Actions to the Menu
+/*!Create Menus 
          *
-	 */
+         *  \Add Actions to the Menu
+	     */
 
 
 void MainWindow::createMenus()
@@ -324,6 +410,7 @@ void MainWindow::createMenus()
     editMenu->addAction(pasteAct);   
 
     ExecMenu = menuBar()->addMenu(tr("&Execution"));
+    ExecMenu->addAction(execAct);
     helpMenu = menuBar()->addMenu(tr("&Help"));
    
 
